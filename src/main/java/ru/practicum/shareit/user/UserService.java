@@ -6,7 +6,8 @@ import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 
-public interface UserController {
+public interface UserService {
+
     List<UserDto> getAllUsers();
 
     UserDto getUser(long id);

@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.dto.PostItemRequest;
 
 import java.util.List;
 
-public interface ItemController {
+public interface ItemService {
 
     ItemDto getItem(long itemId);
 
