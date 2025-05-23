@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userRepository.patchUser(existingUser);
-        
+
         return UserMapper.toUserDto(user);
     }
 

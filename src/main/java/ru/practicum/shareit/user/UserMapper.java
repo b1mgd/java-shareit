@@ -26,7 +26,7 @@ public class UserMapper {
         return user;
     }
 
-    public static User toUser (PatchUserRequest request, long userId) {
+    public static User toUser(PatchUserRequest request, long userId) {
         User user = new User();
         user.setId(userId);
 

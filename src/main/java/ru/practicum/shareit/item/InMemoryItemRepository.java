@@ -29,23 +29,23 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     @Override
-public List<Item> searchItems(String text) {
-    if (text == null || text.isBlank()) {
-        return List.of();
+    public List<Item> searchItems(String text) {
+        if (text == null || text.isBlank()) {
+            return List.of();
+        }
+
+        String searchText = text.toLowerCase().trim();
+        return items.values()
+                .stream()
+                .filter(Item::getAvailable)
+                .filter(item -> {
+                    String name = item.getName();
+                    String description = item.getDescription();
+                    return (name != null && name.toLowerCase().contains(searchText)) ||
+                            (description != null && description.toLowerCase().contains(searchText));
+                })
+                .collect(Collectors.toList());
     }
-    
-    String searchText = text.toLowerCase().trim();
-    return items.values()
-            .stream()
-            .filter(Item::getAvailable)
-            .filter(item -> {
-                String name = item.getName();
-                String description = item.getDescription();
-                return (name != null && name.toLowerCase().contains(searchText)) ||
-                       (description != null && description.toLowerCase().contains(searchText));
-            })
-            .collect(Collectors.toList());
-}
 
     @Override
     public Item saveItem(Item item) {
