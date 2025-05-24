@@ -1,12 +1,23 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.PatchItemRequest;
+import ru.practicum.shareit.item.dto.PostItemRequest;
 
-/**
- * TODO Sprint add-controllers.
- */
-@RestController
-@RequestMapping("/items")
-public class ItemController {
+import java.util.List;
+
+public interface ItemController {
+
+    ItemDto getItem(@Positive long itemId);
+
+    List<ItemDto> getOwnerItems(@Positive long ownerId);
+
+    List<ItemDto> searchItems(@NotNull String text);
+
+    ItemDto createItem(@Valid PostItemRequest request, @Positive long ownerId);
+
+    ItemDto patchItem(@Positive long itemId, @Valid PatchItemRequest request, @Positive long ownerId);
 }
