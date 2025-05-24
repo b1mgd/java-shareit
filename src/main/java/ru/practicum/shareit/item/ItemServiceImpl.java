@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -15,43 +16,51 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
     @Override
     public ItemDto getItem(long itemId) {
-        return itemRepository.getItem(itemId)
+        ItemDto result = itemRepository.getItem(itemId)
                 .map(ItemMapper::toItemDto)
                 .orElseThrow(() -> new NotFoundException("Предмет с itemId " + itemId + " не был найден"));
+        log.info("Получен результат: {}", result);
+        return result;
     }
 
     @Override
     public List<ItemDto> getOwnerItems(long ownerId) {
-        return itemRepository.getItems(ownerId)
+        List<ItemDto> result = itemRepository.getItems(ownerId)
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
+        log.info("Получен результат: {}", result);
+        return result;
     }
 
     @Override
     public List<ItemDto> searchItems(String text) {
         text = text.toLowerCase().trim();
-        return itemRepository.searchItems(text)
+        List<ItemDto> result = itemRepository.searchItems(text)
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
+        log.info("Получен результат: {}", result);
+        return result;
     }
 
     @Override
     public ItemDto createItem(PostItemRequest request, long ownerId) {
         User user = userRepository.getUser(ownerId)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id " + ownerId + " не был найден"));
+                .orElseThrow(() -> new NotFoundException("Пользователь с userId " + ownerId + " не был найден"));
 
         Item item = ItemMapper.toItem(request);
         item.setOwnerId(ownerId);
-
         Item savedItem = itemRepository.saveItem(item);
+        log.info("Получен результат: {}", savedItem);
+
         return ItemMapper.toItemDto(savedItem);
     }
 
@@ -61,7 +70,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Предмет с itemId " + itemId + " не был найден"));
 
         if (existingItem.getOwnerId() != ownerId) {
-            throw new NotFoundException("Пользователь с id " + ownerId + " не является владельцем предмета");
+            throw new NotFoundException("Пользователь с userId " + ownerId + " не является владельцем предмета");
         }
 
         if (request.hasName()) {
@@ -75,6 +84,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         Item updatedItem = itemRepository.patchItem(existingItem);
+        log.info("Получен результат: {}", updatedItem);
         return ItemMapper.toItemDto(updatedItem);
     }
 }

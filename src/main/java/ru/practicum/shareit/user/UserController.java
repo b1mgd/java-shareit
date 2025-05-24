@@ -1,5 +1,7 @@
 package ru.practicum.shareit.user;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import ru.practicum.shareit.user.dto.PostUserRequest;
 import ru.practicum.shareit.user.dto.PatchUserRequest;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -9,11 +11,11 @@ import java.util.List;
 public interface UserController {
     List<UserDto> getAllUsers();
 
-    UserDto getUser(long id);
+    UserDto getUser(@Positive long id);
 
-    UserDto createUser(PostUserRequest request);
+    UserDto createUser(@Valid PostUserRequest request);
 
-    UserDto patchUser(PatchUserRequest request, long userId);
+    UserDto patchUser(@Valid PatchUserRequest request, @Positive long userId);
 
-    void deleteUser(long id);
+    void deleteUser(@Positive long id);
 }

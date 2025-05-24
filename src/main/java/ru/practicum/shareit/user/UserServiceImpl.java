@@ -22,17 +22,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers()
+        List<UserDto> result = userRepository.getAllUsers()
                 .stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
+        log.info("Получен результат: {}", result);
+        return result;
     }
 
     @Override
     public UserDto getUser(long id) {
-        return userRepository.getUser(id)
+        UserDto result = userRepository.getUser(id)
                 .map(UserMapper::toUserDto)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не был найден"));
+        log.info("Получен результат: {}", result);
+        return result;
     }
 
     @Override
@@ -44,6 +48,8 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userRepository.saveUser(UserMapper.toUser(request));
+        log.info("Получен результат: {}", user);
+
         return UserMapper.toUserDto(user);
     }
 
@@ -69,6 +75,7 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userRepository.patchUser(existingUser);
+        log.info("Получен результат: {}", user);
 
         return UserMapper.toUserDto(user);
     }
@@ -82,6 +89,7 @@ public class UserServiceImpl implements UserService {
         }
 
         userRepository.deleteUser(id);
+        log.info("Пользователь с id {} был удален", id);
     }
 
     private boolean checkContainsDuplicateEmail(String email) {
