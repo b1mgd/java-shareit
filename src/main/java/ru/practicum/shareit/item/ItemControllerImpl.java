@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.PatchItemRequest;
-import ru.practicum.shareit.item.dto.PostItemRequest;
+import ru.practicum.shareit.item.dto.*;
 
 import java.util.List;
 
@@ -30,7 +28,7 @@ public class ItemControllerImpl implements ItemController {
     @Override
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ItemDto> getOwnerItems(@RequestHeader("X-Sharer-User-Id") long ownerId) {
+    public List<OwnedItemDto> getOwnerItems(@RequestHeader("X-Sharer-User-Id") long ownerId) {
         log.info("Запрос на получение списка предметов владельца c userId: {}", ownerId);
         return itemService.getOwnerItems(ownerId);
     }
@@ -60,5 +58,33 @@ public class ItemControllerImpl implements ItemController {
         log.info("Запрос на изменение предмета с itemid: {} владельца с userId: {}. Request: {}",
                 itemId, ownerId, request);
         return itemService.patchItem(itemId, request, ownerId);
+    }
+
+    @Override
+    @PostMapping("/{itemId}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto addComment(@RequestBody PostCommentRequest request,
+                                 @PathVariable long itemId,
+                                 @RequestHeader("X-Sharer-User-Id") long authorId) {
+        log.info("Запрос на добавление комментария к itemId: {} от authorId: {}. Request: {}",
+                itemId, authorId, request);
+        return itemService.addComment(request, itemId, authorId);
+    }
+
+    // временно поменяли ссылку
+    @Override
+    @GetMapping("/{itemId}/comments")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CommentDto> getAllCommentsForItem(@PathVariable long itemId) {
+        log.info("Получен запрос на получение комментариев к предмету с itemId: {}", itemId);
+        return itemService.getAllCommentsForItem(itemId);
+    }
+
+    // временно поменяли ссылку
+    @Override
+    @GetMapping("/comments/owner")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CommentDto> getAllCommentsForOwner(@RequestHeader("X-Sharer-User-Id") long ownerId) {
+        return itemService.getAllCommentsForOwner(ownerId);
     }
 }

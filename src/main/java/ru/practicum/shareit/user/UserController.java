@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import java.util.List;
 
 public interface UserController {
+
     List<UserDto> getAllUsers();
 
     UserDto getUser(@Positive long id);

@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class PostUserRequest {
+
     @NotBlank
     private String name;
 
