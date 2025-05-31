@@ -30,6 +30,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingJpaRepository bookingRepository;
     private final ItemJpaRepository itemRepository;
     private final UserJpaRepository userRepository;
+    private final BookingMapper bookingMapper;
 
     @Override
     public BookingDto addBooking(long userId, PostBookingRequest request) {
@@ -56,13 +57,13 @@ public class BookingServiceImpl implements BookingService {
             throw new ArgumentsNotValidException("Некорректные даты бронирования. Start: " + start + " End: " + end);
         }
 
-        Booking booking = BookingMapper.mapToBooking(request);
+        Booking booking = bookingMapper.mapToBooking(request);
         booking.setItem(item);
         booking.setBooker(booker);
         booking.setStatus(Status.WAITING);
 
         Booking savedBooking = bookingRepository.save(booking);
-        BookingDto result = BookingMapper.mapToBookingDto(savedBooking);
+        BookingDto result = bookingMapper.mapToBookingDto(savedBooking);
         log.info("Бронирование сохранено: {}", result);
 
         return result;
@@ -71,7 +72,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto considerBooking(Long userId, long bookingId, boolean approved) {
 
-        // Порядок проверки такой из-за теста в постмане
         Booking booking = getBooking(bookingId);
 
         if (!userId.equals(booking.getItem().getOwner().getId())) {
@@ -79,7 +79,7 @@ public class BookingServiceImpl implements BookingService {
                     " возможно только его владельцем");
         }
 
-        User user = getUser(userId);
+        validateUser(userId);
 
         if (approved) {
             booking.setStatus(Status.APPROVED);
@@ -88,15 +88,16 @@ public class BookingServiceImpl implements BookingService {
         }
 
         Booking savedBooking = bookingRepository.save(booking);
-        BookingDto result = BookingMapper.mapToBookingDto(savedBooking);
+        BookingDto result = bookingMapper.mapToBookingDto(savedBooking);
         log.info("Статус бронирования изменен: {}", result);
 
         return result;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BookingDto getBooking(long userId, long bookingId) {
-        User user = getUser(userId);
+        validateUser(userId);
         Booking booking = getBooking(bookingId);
         long ownerId = booking.getItem().getOwner().getId();
         long bookerId = booking.getBooker().getId();
@@ -106,15 +107,16 @@ public class BookingServiceImpl implements BookingService {
                     " разрешен только владельцу или пользователю, оставившему бронирование");
         }
 
-        BookingDto result = BookingMapper.mapToBookingDto(booking);
+        BookingDto result = bookingMapper.mapToBookingDto(booking);
         log.info("Получен результат: {}", result);
 
         return result;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingDto> getUserBookings(long userId, State state) {
-        User user = getUser(userId);
+        validateUser(userId);
         Status status = Status.APPROVED;
 
         List<Booking> userBookings = switch (state) {
@@ -134,7 +136,7 @@ public class BookingServiceImpl implements BookingService {
 
         List<BookingDto> result = userBookings
                 .stream()
-                .map(BookingMapper::mapToBookingDto)
+                .map(bookingMapper::mapToBookingDto)
                 .collect(Collectors.toList());
         log.info("Получен результат: {}", result);
 
@@ -142,8 +144,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<BookingDto> getOwnedItemsBookings(long userId, State state) {
-        User user = getUser(userId);
+        validateUser(userId);
         List<Item> userItems = itemRepository.findAllByOwnerId(userId);
 
         if (userItems.isEmpty()) {
@@ -169,7 +172,7 @@ public class BookingServiceImpl implements BookingService {
 
         List<BookingDto> result = userBookings
                 .stream()
-                .map(BookingMapper::mapToBookingDto)
+                .map(bookingMapper::mapToBookingDto)
                 .collect(Collectors.toList());
         log.info("Получен результат: {}", result);
 
@@ -190,5 +193,13 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирование с bookingId " + bookingId +
                         " не было обнаружено"));
+    }
+
+    private void validateUser(long userId) {
+        boolean exists = userRepository.existsById(userId);
+
+        if (!exists) {
+            throw new NotFoundException("Пользователь с userId " + userId + " не был найден");
+        }
     }
 }

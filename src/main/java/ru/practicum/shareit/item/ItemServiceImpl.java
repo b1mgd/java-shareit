@@ -28,10 +28,12 @@ public class ItemServiceImpl implements ItemService {
     private final UserJpaRepository userRepository;
     private final BookingJpaRepository bookingRepository;
     private final CommentJpaRepository commentRepository;
+    private final ItemMapper itemMapper;
+    private final CommentMapper commentMapper;
 
     @Override
     public ItemDto getItem(long itemId) {
-        ItemDto result = ItemMapper.mapToItemDto(getItemById(itemId));
+        ItemDto result = itemMapper.mapToItemDto(getItemById(itemId));
         result.setComments(getAllCommentsForItem(itemId));
         log.info("Получен результат: {}", result);
 
@@ -40,7 +42,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<OwnedItemDto> getOwnerItems(long ownerId) {
-        User owner = getUser(ownerId);
+        validateUser(ownerId);
         List<Item> items = itemRepository.findAllByOwnerId(ownerId);
 
         if (items.isEmpty()) {
@@ -53,10 +55,16 @@ public class ItemServiceImpl implements ItemService {
 
         List<Booking> bookings = bookingRepository.findAllByItemIdIn(itemIds);
 
+        Map<Long, List<Booking>> bookingsByItemId = bookings.stream()
+                .collect(Collectors.groupingBy(b -> b.getItem().getId()));
+
         List<OwnedItemDto> result = new ArrayList<>();
 
         for (Item item : items) {
-            OwnedItemDto ownedItemDto = ItemMapper.mapToOwnedItemDto(item, bookings);
+            OwnedItemDto ownedItemDto = itemMapper.mapToOwnedItemDto(item);
+            List<Booking> itemBookings = bookingsByItemId.getOrDefault(item.getId(), Collections.emptyList());
+            fillBookingDates(ownedItemDto, itemBookings);
+
             result.add(ownedItemDto);
         }
 
@@ -65,6 +73,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> searchItems(String text) {
         if (text == null || text.isEmpty()) {
             return Collections.emptyList();
@@ -72,7 +81,7 @@ public class ItemServiceImpl implements ItemService {
 
         List<ItemDto> result = itemRepository.searchItems(text)
                 .stream()
-                .map(ItemMapper::mapToItemDto)
+                .map(itemMapper::mapToItemDto)
                 .collect(Collectors.toList());
         log.info("Получен результат: {}", result);
 
@@ -83,12 +92,12 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto createItem(PostItemRequest request, long ownerId) {
         User owner = getUser(ownerId);
 
-        Item item = ItemMapper.mapToItem(request);
+        Item item = itemMapper.mapToItem(request);
         item.setOwner(owner);
         Item savedItem = itemRepository.save(item);
         log.info("Получен результат: {}", savedItem);
 
-        return ItemMapper.mapToItemDto(savedItem);
+        return itemMapper.mapToItemDto(savedItem);
     }
 
     @Override
@@ -112,7 +121,7 @@ public class ItemServiceImpl implements ItemService {
         Item updatedItem = itemRepository.save(existingItem);
         log.info("Получен результат: {}", updatedItem);
 
-        return ItemMapper.mapToItemDto(updatedItem);
+        return itemMapper.mapToItemDto(updatedItem);
     }
 
     @Override
@@ -133,10 +142,10 @@ public class ItemServiceImpl implements ItemService {
                     itemId + " т.к. не имеет завершенного подтвержденного бронирования");
         }
 
-        Comment comment = CommentMapper.mapToComment(request, item, author);
+        Comment comment = commentMapper.mapToComment(request, item, author);
         Comment savedComment = commentRepository.save(comment);
 
-        CommentDto commentDto = CommentMapper.mapToCommentDto(savedComment);
+        CommentDto commentDto = commentMapper.mapToCommentDto(savedComment);
         log.info("Комментарий сохранен: {}", commentDto);
 
         return commentDto;
@@ -144,10 +153,11 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentDto> getAllCommentsForItem(long itemId) {
         List<CommentDto> comments = commentRepository.findAllByItemId(itemId)
                 .stream()
-                .map(CommentMapper::mapToCommentDto)
+                .map(commentMapper::mapToCommentDto)
                 .collect(Collectors.toList());
         log.info("Получены комментарии: {}", comments);
 
@@ -155,10 +165,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentDto> getAllCommentsForOwner(long ownerId) {
         List<CommentDto> comments = commentRepository.findAllByItemOwnerId(ownerId)
                 .stream()
-                .map(CommentMapper::mapToCommentDto)
+                .map(commentMapper::mapToCommentDto)
                 .collect(Collectors.toList());
         log.info("Получены комментарии к предметам владельца: {}", comments);
 
@@ -173,5 +184,37 @@ public class ItemServiceImpl implements ItemService {
     private Item getItemById(long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Предмет с itemId " + itemId + " не был найден"));
+    }
+
+    private void validateUser(long userId) {
+        boolean exists = userRepository.existsById(userId);
+
+        if (!exists) {
+            throw new NotFoundException("Пользователь с userId " + userId + " не был найден");
+        }
+    }
+
+    private void fillBookingDates(OwnedItemDto dto, List<Booking> bookings) {
+        if (bookings.isEmpty()) {
+            return;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        bookings.stream()
+                .filter(b -> b.getEnd().isBefore(now))
+                .max(Comparator.comparing(Booking::getEnd))
+                .ifPresent(lastBooking -> {
+                    dto.setLastStart(lastBooking.getStart());
+                    dto.setLastEnd(lastBooking.getEnd());
+                });
+
+        bookings.stream()
+                .filter(b -> b.getStart().isAfter(now))
+                .min(Comparator.comparing(Booking::getStart))
+                .ifPresent(nextBooking -> {
+                    dto.setNextStart(nextBooking.getStart());
+                    dto.setNextEnd(nextBooking.getEnd());
+                });
     }
 }

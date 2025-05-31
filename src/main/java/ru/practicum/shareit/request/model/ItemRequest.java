@@ -1,12 +1,17 @@
 package ru.practicum.shareit.request.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
-@Data
 @Entity
 @Table(name = "requests")
+@Getter
+@Setter
+@ToString(exclude = {"requestor"})
+@EqualsAndHashCode(exclude = {"requestor"})
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemRequest {
 
     @Id

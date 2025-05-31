@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Data;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.List;
 
@@ -11,9 +13,9 @@ public class ItemDto {
     private String name;
     private String description;
     private Boolean available;
-    private Long ownerId;
+    private UserDto owner;
+    private ItemRequestDto request;
     private BookingDto lastBooking;
     private BookingDto nextBooking;
     private List<CommentDto> comments;
-    private Long requestId;
 }

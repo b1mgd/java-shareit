@@ -21,12 +21,14 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserJpaRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         List<UserDto> result = userRepository.findAll()
                 .stream()
-                .map(UserMapper::mapToUserDto)
+                .map(userMapper::mapToUserDto)
                 .collect(Collectors.toList());
         log.info("Получен результат: {}", result);
 
@@ -34,9 +36,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto getUser(long id) {
         UserDto result = userRepository.findById(id)
-                .map(UserMapper::mapToUserDto)
+                .map(userMapper::mapToUserDto)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не был найден"));
         log.info("Получен результат: {}", result);
         return result;
@@ -50,10 +53,10 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Пользователь с email: " + email + " уже зарегистрирован");
         }
 
-        User user = userRepository.save(UserMapper.mapToUser(request));
+        User user = userRepository.save(userMapper.mapToUser(request));
         log.info("Получен результат: {}", user);
 
-        return UserMapper.mapToUserDto(user);
+        return userMapper.mapToUserDto(user);
     }
 
     @Override
@@ -80,7 +83,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.save(existingUser);
         log.info("Получен результат: {}", user);
 
-        return UserMapper.mapToUserDto(user);
+        return userMapper.mapToUserDto(user);
     }
 
     @Override
@@ -96,8 +99,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean checkContainsDuplicateEmail(String email) {
-        return userRepository.findAll()
-                .stream()
-                .anyMatch(user -> user.getEmail().equals(email));
+        return userRepository.existsByEmail(email);
     }
 }
