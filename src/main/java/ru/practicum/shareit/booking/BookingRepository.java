@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookingJpaRepository extends JpaRepository<Booking, Long> {
+public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     // State = State.ALL
     List<Booking> findAllByBookerIdOrderByStartDesc(long userId);

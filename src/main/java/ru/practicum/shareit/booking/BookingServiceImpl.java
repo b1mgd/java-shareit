@@ -13,9 +13,9 @@ import ru.practicum.shareit.exception.AccessForbiddenException;
 import ru.practicum.shareit.exception.ArgumentsNotValidException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.item.ItemJpaRepository;
+import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserJpaRepository;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 public class BookingServiceImpl implements BookingService {
-    private final BookingJpaRepository bookingRepository;
-    private final ItemJpaRepository itemRepository;
-    private final UserJpaRepository userRepository;
+    private final BookingRepository bookingRepository;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
     private final BookingMapper bookingMapper;
 
     @Override

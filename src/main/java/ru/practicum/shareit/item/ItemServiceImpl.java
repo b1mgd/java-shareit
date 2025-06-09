@@ -4,16 +4,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.BookingJpaRepository;
+import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.exception.ArgumentsNotValidException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.UserJpaRepository;
+import ru.practicum.shareit.request.RequestRepository;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.request.model.Request;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -24,10 +26,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 public class ItemServiceImpl implements ItemService {
-    private final ItemJpaRepository itemRepository;
-    private final UserJpaRepository userRepository;
-    private final BookingJpaRepository bookingRepository;
-    private final CommentJpaRepository commentRepository;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
     private final ItemMapper itemMapper;
     private final CommentMapper commentMapper;
 
@@ -91,9 +94,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto createItem(PostItemRequest request, long ownerId) {
         User owner = getUser(ownerId);
+        Long requestId = request.getRequestId();
+        Request itemRequest = null;
 
-        Item item = itemMapper.mapToItem(request);
-        item.setOwner(owner);
+        if (requestId != null) {
+            itemRequest = getRequestById(requestId);
+        }
+
+        Item item = itemMapper.mapToItem(request, owner, itemRequest);
         Item savedItem = itemRepository.save(item);
         log.info("Получен результат: {}", savedItem);
 
@@ -184,6 +192,11 @@ public class ItemServiceImpl implements ItemService {
     private Item getItemById(long itemId) {
         return itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Предмет с itemId " + itemId + " не был найден"));
+    }
+
+    private Request getRequestById(long requestId) {
+        return requestRepository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("Запрос на предмет с requestId " + requestId + " не был найден"));
     }
 
     private void validateUser(long userId) {

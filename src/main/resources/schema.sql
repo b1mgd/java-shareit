@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS requests
 (
     id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     description  VARCHAR(1000),
-    requestor_id BIGINT NOT NULL REFERENCES users (id)
+    requestor_id BIGINT                      NOT NULL REFERENCES users (id),
+    created      TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS items
