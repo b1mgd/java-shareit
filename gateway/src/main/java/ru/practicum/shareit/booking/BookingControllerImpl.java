@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.PostBookingRequest;
 import ru.practicum.shareit.booking.dto.State;
+import ru.practicum.shareit.exception.ValidationException;
 
 import java.util.List;
 
@@ -23,9 +24,17 @@ public class BookingControllerImpl implements BookingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookingDto addBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                 @RequestBody PostBookingRequest request) {
+                                 @RequestBody @Validated PostBookingRequest request) {
         log.info("Запрос на бронирование от пользователя с userId {}: {}", userId, request);
+        validateBookingDates(request);
         return bookingClient.addBooking(userId, request);
+    }
+
+    private void validateBookingDates(PostBookingRequest request) {
+        if (request.getStart() != null && request.getEnd() != null && 
+            request.getStart().isAfter(request.getEnd())) {
+            throw new ValidationException("Дата начала бронирования не может быть позже даты окончания");
+        }
     }
 
     @Override
