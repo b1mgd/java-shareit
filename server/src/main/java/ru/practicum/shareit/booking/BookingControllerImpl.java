@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.PostBookingRequest;
@@ -32,7 +31,7 @@ public class BookingControllerImpl implements BookingController {
     @ResponseStatus(HttpStatus.OK)
     public BookingDto considerBooking(@RequestHeader("X-Sharer-User-Id") long userId,
                                       @PathVariable long bookingId,
-                                      @RequestParam (defaultValue = "true") boolean approved) {
+                                      @RequestParam(defaultValue = "true") boolean approved) {
         log.info("Заявка на бронирование с BookingId: {} рассматривается пользователем с userId {}. Approved: {}",
                 userId, bookingId, approved);
         return bookingService.considerBooking(userId, bookingId, approved);

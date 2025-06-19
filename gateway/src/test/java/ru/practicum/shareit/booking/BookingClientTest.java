@@ -2,7 +2,6 @@ package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -16,7 +15,6 @@ import ru.practicum.shareit.booking.dto.State;
 import ru.practicum.shareit.booking.dto.Status;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -93,4 +91,4 @@ class BookingClientTest {
                 .thenThrow(mock(HttpStatusCodeException.class));
         assertThrows(HttpStatusCodeException.class, () -> bookingClient.addBooking(1L, request));
     }
-} 
+}

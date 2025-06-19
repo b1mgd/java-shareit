@@ -136,4 +136,4 @@ class ItemClientTest {
         ItemDto result = itemClient.getItem(1L);
         assertNull(result);
     }
-} 
+}

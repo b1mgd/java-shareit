@@ -31,8 +31,8 @@ public class BookingControllerImpl implements BookingController {
     }
 
     private void validateBookingDates(PostBookingRequest request) {
-        if (request.getStart() != null && request.getEnd() != null && 
-            request.getStart().isAfter(request.getEnd())) {
+        if (request.getStart() != null && request.getEnd() != null &&
+                request.getStart().isAfter(request.getEnd())) {
             throw new ValidationException("Дата начала бронирования не может быть позже даты окончания");
         }
     }
@@ -42,7 +42,7 @@ public class BookingControllerImpl implements BookingController {
     @ResponseStatus(HttpStatus.OK)
     public BookingDto considerBooking(@RequestHeader("X-Sharer-User-Id") long userId,
                                       @PathVariable long bookingId,
-                                      @RequestParam (defaultValue = "true") boolean approved) {
+                                      @RequestParam(defaultValue = "true") boolean approved) {
         log.info("Заявка на бронирование с BookingId: {} рассматривается пользователем с userId {}. Approved: {}",
                 bookingId, userId, approved);
         return bookingClient.considerBooking(userId, bookingId, approved);

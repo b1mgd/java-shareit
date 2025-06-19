@@ -80,4 +80,4 @@ class RequestClientTest {
                 .thenThrow(mock(HttpStatusCodeException.class));
         assertThrows(HttpStatusCodeException.class, () -> requestClient.createRequest(req, 1L));
     }
-} 
+}

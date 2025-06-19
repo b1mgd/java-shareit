@@ -108,4 +108,4 @@ class UserClientTest {
                 .getUser(1L);
         assertNull(result);
     }
-} 
+}

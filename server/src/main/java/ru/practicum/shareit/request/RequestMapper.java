@@ -1,9 +1,6 @@
 package ru.practicum.shareit.request;
 
 import org.mapstruct.*;
-import org.mapstruct.factory.Mappers;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.PostCommentRequest;
 import ru.practicum.shareit.item.dto.ShortItem;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.PostRequestDto;
@@ -13,12 +10,9 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
 public interface RequestMapper {
-
-    RequestMapper INSTANCE = Mappers.getMapper(RequestMapper.class);
 
     @Mapping(source = "requestor.id", target = "requestorId")
     RequestDto mapToRequestDto(Request itemRequest);

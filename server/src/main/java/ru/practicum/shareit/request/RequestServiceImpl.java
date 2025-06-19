@@ -79,8 +79,7 @@ public class RequestServiceImpl implements RequestService {
 
     private Request getRequestById(long id) {
         return requestRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format("Запрос на предмет с id: '%s' " +
-                        "не был найден")));
+                .orElseThrow(() -> new NotFoundException(String.format("Запрос на предмет с id: '%s' не был найден", id)));
     }
 
     private void validateRequestor(long requestorId) {
