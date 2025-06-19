@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 class RequestMapperTest {
+
     @Autowired
     private RequestMapper requestMapper;
 

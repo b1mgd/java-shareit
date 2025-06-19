@@ -8,9 +8,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("PatchItemRequest: unit-тесты edge-cases")
 class PatchItemRequestTest {
+
     @Nested
     @DisplayName("hasName")
     class HasName {
+
         @Test
         void nullName() {
             PatchItemRequest req = new PatchItemRequest();
@@ -43,6 +45,7 @@ class PatchItemRequestTest {
     @Nested
     @DisplayName("hasDescription")
     class HasDescription {
+
         @Test
         void nullDescription() {
             PatchItemRequest req = new PatchItemRequest();
@@ -75,6 +78,7 @@ class PatchItemRequestTest {
     @Nested
     @DisplayName("hasAvailable")
     class HasAvailable {
+
         @Test
         void nullAvailable() {
             PatchItemRequest req = new PatchItemRequest();

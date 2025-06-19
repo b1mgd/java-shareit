@@ -14,8 +14,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class ItemRepositoryDataJpaTest {
+
     @Autowired
     private ItemRepository itemRepository;
+
     @Autowired
     private org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager em;
 

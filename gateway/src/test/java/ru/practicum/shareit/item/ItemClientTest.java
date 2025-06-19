@@ -18,10 +18,13 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class ItemClientTest {
+
     @Mock
     private RestTemplate restTemplate;
+
     @Mock
     private RestTemplateBuilder builder;
+
     private ItemClient itemClient;
 
     @BeforeEach

@@ -8,6 +8,6 @@ import lombok.Data;
 public class PostRequestDto {
 
     @NotBlank(message = "Описание запроса не может быть пустым")
-    @Size(min = 1, max = 1000, message = "Описание запроса должно содержать от 1 до 1000 символов")
+    @Size(max = 1000, message = "Описание запроса должно содержать от 1 до 1000 символов")
     private String description;
 }

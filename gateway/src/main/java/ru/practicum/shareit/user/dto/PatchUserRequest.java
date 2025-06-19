@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class PatchUserRequest {
 
-    @Size(min = 1, max = 255, message = "Имя пользователя должно содержать от 1 до 255 символов")
+    @Size(max = 255, message = "Имя пользователя должно содержать от 1 до 255 символов")
     private String name;
 
     @Email(message = "Некорректный формат email")

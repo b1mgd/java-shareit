@@ -16,8 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class CommentRepositoryDataJpaTest {
+
     @Autowired
     private CommentRepository commentRepository;
+
     @Autowired
     private org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager em;
 

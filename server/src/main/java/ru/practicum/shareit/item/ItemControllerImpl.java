@@ -69,7 +69,6 @@ public class ItemControllerImpl implements ItemController {
         return itemService.addComment(request, itemId, authorId);
     }
 
-    // временно поменяли ссылку
     @Override
     @GetMapping("/{itemId}/comments")
     @ResponseStatus(HttpStatus.OK)
@@ -78,7 +77,6 @@ public class ItemControllerImpl implements ItemController {
         return itemService.getAllCommentsForItem(itemId);
     }
 
-    // временно поменяли ссылку
     @Override
     @GetMapping("/comments/owner")
     @ResponseStatus(HttpStatus.OK)

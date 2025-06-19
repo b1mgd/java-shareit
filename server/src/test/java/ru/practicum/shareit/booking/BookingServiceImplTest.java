@@ -28,14 +28,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BookingServiceImplTest {
+
     @Mock
     private BookingRepository bookingRepository;
+
     @Mock
     private ItemRepository itemRepository;
+
     @Mock
     private UserRepository userRepository;
-    // @Mock
-    // private BookingMapper bookingMapper;
+
     private BookingMapper bookingMapper = new BookingMapper() {
         @Override
         public Booking mapToBooking(PostBookingRequest request) {

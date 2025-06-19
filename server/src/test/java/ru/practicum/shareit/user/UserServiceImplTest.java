@@ -24,18 +24,23 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("test")
 class UserServiceImplTest {
+
     @MockBean
     private UserRepository userRepository;
+
     @Autowired
     private ru.practicum.shareit.user.UserMapper userMapper;
+
     private UserServiceImpl userService;
 
     @BeforeEach
     void setUp() {
         userService = new UserServiceImpl(userRepository, userMapper);
-        // Глобальные заглушки для всех findAll/findAllBy.../findById
-        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-        when(userRepository.findAll()).thenReturn(Collections.emptyList());
+
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        when(userRepository.findAll())
+                .thenReturn(Collections.emptyList());
     }
 
     @Test

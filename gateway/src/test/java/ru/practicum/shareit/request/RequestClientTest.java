@@ -19,10 +19,13 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class RequestClientTest {
+
     @Mock
     private RestTemplate restTemplate;
+
     @Mock
     private RestTemplateBuilder builder;
+
     private RequestClient requestClient;
 
     @BeforeEach

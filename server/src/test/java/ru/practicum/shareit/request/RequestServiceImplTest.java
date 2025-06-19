@@ -25,23 +25,32 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("test")
 class RequestServiceImplTest {
+
     @MockBean
     private RequestRepository requestRepository;
+
     @MockBean
     private UserRepository userRepository;
+
     @Autowired
     private ru.practicum.shareit.request.RequestMapper requestMapper;
+
     private RequestServiceImpl requestService;
 
     @BeforeEach
     void setUp() {
         requestService = new RequestServiceImpl(requestRepository, requestMapper, userRepository);
-        // Глобальные заглушки для всех findAll/findAllBy.../findById
-        when(requestRepository.findAll()).thenReturn(Collections.emptyList());
-        when(requestRepository.findAllByRequestorId(anyLong())).thenReturn(Collections.emptyList());
-        when(requestRepository.findById(anyLong())).thenReturn(Optional.empty());
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        when(requestRepository.findAll())
+                .thenReturn(Collections.emptyList());
+        when(requestRepository.findAllByRequestorId(anyLong()))
+                .thenReturn(Collections.emptyList());
+        when(requestRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+        when(userRepository.existsById(anyLong()))
+                .thenReturn(true);
+        when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
     }
 
     @Test

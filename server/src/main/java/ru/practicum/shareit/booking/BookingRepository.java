@@ -12,12 +12,10 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    // State = State.ALL
     List<Booking> findAllByBookerIdOrderByStartDesc(long userId);
 
     List<Booking> findAllByItemOwnerIdOrderByStartDesc(long ownerId);
 
-    // State = State.CURRENT
     @Query("SELECT b FROM Booking b " +
             "WHERE b.booker.id = :userId " +
             "AND b.start <= :currentTime " +
@@ -27,14 +25,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                         @Param("currentTime") LocalDateTime currentTime);
 
     @Query("SELECT b FROM Booking b " +
-            "WHERE b.item.owner.id = :ownerId " + // Исправлено на owner.id
+            "WHERE b.item.owner.id = :ownerId " +
             "AND b.start <= :currentTime " +
             "AND b.end >= :currentTime " +
             "ORDER BY b.start DESC ")
     List<Booking> findCurrentByOwnerId(@Param("ownerId") long ownerId,
                                        @Param("currentTime") LocalDateTime currentTime);
 
-    // State = State.PAST
     @Query("SELECT b FROM Booking b " +
             "WHERE b.booker.id = :userId " +
             "AND b.end < :currentTime " +
@@ -49,7 +46,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findPastByOwnerId(@Param("ownerId") long ownerId,
                                     @Param("currentTime") LocalDateTime currentTime);
 
-    // State = State.FUTURE
     @Query("SELECT b FROM Booking b " +
             "WHERE b.booker.id = :userId " +
             "AND b.start > :currentTime " +
@@ -64,7 +60,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findFutureByOwnerId(@Param("ownerId") long ownerId,
                                       @Param("currentTime") LocalDateTime currentTime);
 
-    // State = State.WAITING || STATE.REJECTED (Status.WAITING || Status.REJECTED)
     List<Booking> findAllByBookerIdAndStatusOrderByStartDesc(Long userId, Status status);
 
     List<Booking> findAllByItemOwnerIdAndStatusOrderByStartDesc(Long ownerId, Status status);

@@ -20,10 +20,13 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class UserClientTest {
+
     @Mock
     private RestTemplate restTemplate;
+
     @Mock
     private RestTemplateBuilder builder;
+
     private UserClient userClient;
 
     @BeforeEach
@@ -91,7 +94,6 @@ class UserClientTest {
     @Test
     void getUser_non2xxWithBody_returnsBody() {
         UserDto expected = new UserDto(1L, "name", "email");
-        // 404 с телом
         when(restTemplate.exchange(anyString(), eq(org.springframework.http.HttpMethod.GET), any(), eq(UserDto.class)))
                 .thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).body(expected));
         UserDto result = new UserClient("http://localhost", builder)
@@ -101,7 +103,6 @@ class UserClientTest {
 
     @Test
     void getUser_non2xxWithoutBody_returnsNoBody() {
-        // 500 без тела
         when(restTemplate.exchange(anyString(), eq(org.springframework.http.HttpMethod.GET), any(), eq(UserDto.class)))
                 .thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
         UserDto result = new UserClient("http://localhost", builder)

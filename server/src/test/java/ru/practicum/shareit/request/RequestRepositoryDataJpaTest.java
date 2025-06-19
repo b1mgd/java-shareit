@@ -14,12 +14,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class RequestRepositoryDataJpaTest {
+
     @Autowired
     private RequestRepository requestRepository;
+
     @Autowired
     private org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager em;
 
     private User requestor;
+
     private Request request;
 
     @BeforeEach

@@ -11,8 +11,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class UserRepositoryDataJpaTest {
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager em;
 

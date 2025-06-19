@@ -21,10 +21,13 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class BookingClientTest {
+
     @Mock
     private RestTemplate restTemplate;
+
     @Mock
     private RestTemplateBuilder builder;
+
     private BookingClient bookingClient;
 
     @BeforeEach

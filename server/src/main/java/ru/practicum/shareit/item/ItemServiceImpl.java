@@ -159,7 +159,6 @@ public class ItemServiceImpl implements ItemService {
         return commentDto;
     }
 
-
     @Override
     @Transactional(readOnly = true)
     public List<CommentDto> getAllCommentsForItem(long itemId) {

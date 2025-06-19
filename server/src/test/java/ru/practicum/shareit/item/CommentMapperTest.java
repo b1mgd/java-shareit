@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @ActiveProfiles("test")
 class CommentMapperTest {
+
     @Autowired
     private CommentMapper commentMapper;
 

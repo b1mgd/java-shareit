@@ -18,8 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 class BookingRepositoryDataJpaTest {
+
     @Autowired
     private BookingRepository bookingRepository;
+
     @Autowired
     private org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager em;
 

@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(ErrorHandler.class)
 @DisplayName("Тестирование ErrorHandler через стаб-контроллер")
 class ErrorHandlerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
