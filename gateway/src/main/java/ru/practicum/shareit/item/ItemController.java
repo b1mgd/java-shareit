@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -18,7 +18,7 @@ public interface ItemController {
 
     List<OwnedItemDto> getOwnerItems(@Positive long ownerId);
 
-    List<ItemDto> searchItems(@NotNull String text);
+    List<ItemDto> searchItems(@NotBlank String text);
 
     ItemDto createItem(@Valid PostItemRequest request, @Positive long ownerId);
 

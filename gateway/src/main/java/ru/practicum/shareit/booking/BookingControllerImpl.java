@@ -24,7 +24,7 @@ public class BookingControllerImpl implements BookingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BookingDto addBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-                                 @RequestBody @Validated PostBookingRequest request) {
+                                 @RequestBody PostBookingRequest request) {
         log.info("Запрос на бронирование от пользователя с userId {}: {}", userId, request);
         validateBookingDates(request);
         return bookingClient.addBooking(userId, request);
